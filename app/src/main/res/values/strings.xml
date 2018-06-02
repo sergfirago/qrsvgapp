@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">QRAplication</string>
+    <string name="main_bt_import">Import</string>
+    <string name="main_bt_export">Export</string>
+    <string name="main_bt_save">Save</string>
+    <string name="main_bt_read">Read</string>
 </resources>
