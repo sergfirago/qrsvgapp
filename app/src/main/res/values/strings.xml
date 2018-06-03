@@ -10,4 +10,5 @@
     <string name="dialog_cancel">Cancel</string>
     <string name="main_save_qr_to">Save QR to</string>
     <string name="main_incorrect_data">incorrect data</string>
+    <string name="main_permissions_deny">"If you reject permission,you can not use this service. Please turn on permissions at [Setting] > [Permission]"></string>
 </resources>

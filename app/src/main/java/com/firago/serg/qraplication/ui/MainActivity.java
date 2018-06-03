@@ -1,5 +1,6 @@
 package com.firago.serg.qraplication.ui;
 
+import android.Manifest;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -18,14 +19,16 @@ import com.firago.serg.qraplication.AsyncSvgLoadingTask;
 import com.firago.serg.qraplication.R;
 import com.firago.serg.qraplication.util.FileUtil;
 import com.firago.serg.qraplication.util.QRHelper;
-import com.firago.serg.qraplication.util.RequestPermissions;
 import com.firago.serg.qraplication.util.SvgHelper;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 
 import net.glxn.qrgen.core.exception.QRGenerationException;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,8 +61,10 @@ public class MainActivity extends AppCompatActivity implements InputDialog.Input
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         ButterKnife.bind(this);
         state = NOT_LOADED;
         if (savedInstanceState != null) {
@@ -82,6 +87,28 @@ public class MainActivity extends AppCompatActivity implements InputDialog.Input
                 break;
             }
         }
+        getPermissions();
+    }
+
+    private void getPermissions() {
+        PermissionListener permissionlistener = new PermissionListener() {
+            @Override
+            public void onPermissionGranted() {
+//                Toast.makeText(MainActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+//                Toast.makeText(MainActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+            }
+
+
+        };
+        TedPermission.with(this)
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage(R.string.main_permissions_deny)
+                .setPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .check();
     }
 
     private void setButtonState() {
@@ -127,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements InputDialog.Input
     @Override
     public void onDialogOkClick(String text) {
         if (text.trim().isEmpty()) return;
-        if(!URLUtil.isValidUrl(text)){
+        if (!URLUtil.isValidUrl(text)) {
             // it's storage file
             File file = new File(FileUtil.getExternalStorageDir(), text);
             try {
@@ -167,19 +194,18 @@ public class MainActivity extends AppCompatActivity implements InputDialog.Input
     public void onClickSave() {
         if (svgIsNotLoaded()) return;
 
-        if (!RequestPermissions.writeExternalPermission(this)) return;
         File file = null;
         try {
             file = FileUtil.createImageFile();
             Log.d(TAG, "onClickSave: " + file.getAbsolutePath());
             QRHelper.writeToFile(svgText, file);
-            Toast.makeText(this, getString(R.string.main_save_qr_to)+" " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.main_save_qr_to) + " " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (QRGenerationException e){
+        } catch (QRGenerationException e) {
             e.printStackTrace();
             showSnackBarError(getString(R.string.main_error_too_big_data));
-            if (file!=null) file.delete();
+            if (file != null) file.delete();
 
         }
     }
@@ -187,9 +213,6 @@ public class MainActivity extends AppCompatActivity implements InputDialog.Input
     private boolean svgIsNotLoaded() {
         return svgText == null || svgText.trim().isEmpty();
     }
-
-
-
 
 
     private void setSvgState() {
@@ -212,12 +235,11 @@ public class MainActivity extends AppCompatActivity implements InputDialog.Input
             ivPicture.setImageBitmap(bitmap);
             state = QR_PICTURE;
             setButtonState();
-        }catch (QRGenerationException e){
+        } catch (QRGenerationException e) {
             e.printStackTrace();
             showSnackBarError(getString(R.string.main_error_too_big_data));
         }
     }
-
 
 
     private void setNotLoadedState() {
@@ -246,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements InputDialog.Input
         TextView textView = snackbarLayout.findViewById(android.support.design.R.id.snackbar_text);
         textView.setVisibility(View.INVISIBLE);
 
-        snackbarLayout.setPadding(0,0,0,0);
+        snackbarLayout.setPadding(0, 0, 0, 0);
         View view = getLayoutInflater().inflate(R.layout.snackbar_item, snackbarLayout);
 
         TextView tvErrorMessage = view.findViewById(R.id.tvErrorMessage);
