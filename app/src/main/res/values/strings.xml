@@ -12,4 +12,5 @@
     <string name="main_incorrect_data">incorrect data</string>
     <string name="main_permissions_deny">"If you reject permission,you can not use this service. Please turn on permissions at [Setting] > [Permission]"></string>
     <string name="main_error_loading">Error loading svg-file</string>
+    <string name="main_error_save_qr_to">Error save QR to</string>
 </resources>

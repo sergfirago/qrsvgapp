@@ -75,67 +75,6 @@ public class MainActivity extends AppCompatActivity implements InputDialog.Input
         getPermissions();
     }
 
-    private void resetActivityState() {
-        Log.d(TAG, "onCreate: state=" + state);
-        switch (state) {
-            case NOT_LOADED: {
-                setNotLoadedState();
-                break;
-            }
-            case QR_PICTURE: {
-                setQRCodeState();
-                break;
-            }
-            case SVG_PICTURE: {
-                setSvgState();
-                break;
-            }
-        }
-    }
-
-    private void getPermissions() {
-        PermissionListener permissionlistener = new PermissionListener() {
-            @Override
-            public void onPermissionGranted() {
-//                Toast.makeText(MainActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onPermissionDenied(ArrayList<String> deniedPermissions) {
-//                Toast.makeText(MainActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
-            }
-
-
-        };
-        TedPermission.with(this)
-                .setPermissionListener(permissionlistener)
-                .setDeniedMessage(R.string.main_permissions_deny)
-                .setPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .check();
-    }
-
-    private void setButtonState() {
-        switch (state) {
-            case NOT_LOADED: {
-                btExport.setText(R.string.main_export);
-                btExport.setEnabled(false);
-                btSave.setEnabled(false);
-                break;
-            }
-            case QR_PICTURE: {
-                btExport.setText(R.string.main_svg);
-                btExport.setEnabled(true);
-                btSave.setEnabled(true);
-                break;
-            }
-            case SVG_PICTURE: {
-                btExport.setText(R.string.main_export);
-                btExport.setEnabled(true);
-                btSave.setEnabled(true);
-                break;
-            }
-        }
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -208,13 +147,76 @@ public class MainActivity extends AppCompatActivity implements InputDialog.Input
             showSnackBarInfo(getString(R.string.main_save_qr_to) + " " + file.getAbsolutePath());
         } catch (IOException e) {
             e.printStackTrace();
+            showSnackBarError(getString(R.string.main_error_save_qr_to) + " " + file.getAbsolutePath());
         } catch (QRGenerationException e) {
             e.printStackTrace();
             showSnackBarError(getString(R.string.main_error_too_big_data));
             if (file != null) file.delete();
-
         }
     }
+
+
+    private void resetActivityState() {
+        Log.d(TAG, "onCreate: state=" + state);
+        switch (state) {
+            case NOT_LOADED: {
+                setNotLoadedState();
+                break;
+            }
+            case QR_PICTURE: {
+                setQRCodeState();
+                break;
+            }
+            case SVG_PICTURE: {
+                setSvgState();
+                break;
+            }
+        }
+    }
+
+    private void getPermissions() {
+        PermissionListener permissionlistener = new PermissionListener() {
+            @Override
+            public void onPermissionGranted() {
+//                Toast.makeText(MainActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+//                Toast.makeText(MainActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        TedPermission.with(this)
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage(R.string.main_permissions_deny)
+                .setPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .check();
+    }
+
+    private void setButtonsState() {
+        switch (state) {
+            case NOT_LOADED: {
+                btExport.setText(R.string.main_export);
+                btExport.setEnabled(false);
+                btSave.setEnabled(false);
+                break;
+            }
+            case QR_PICTURE: {
+                btExport.setText(R.string.main_svg);
+                btExport.setEnabled(true);
+                btSave.setEnabled(true);
+                break;
+            }
+            case SVG_PICTURE: {
+                btExport.setText(R.string.main_export);
+                btExport.setEnabled(true);
+                btSave.setEnabled(true);
+                break;
+            }
+        }
+    }
+
 
     private boolean svgIsNotLoaded() {
         return svgText == null || svgText.trim().isEmpty();
@@ -232,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements InputDialog.Input
             showSnackBarError(getString(R.string.main_incorrect_data));
             e.printStackTrace();
         }
-        setButtonState();
+        setButtonsState();
     }
 
     private void setQRCodeState() {
@@ -240,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements InputDialog.Input
             Bitmap bitmap = QRHelper.getQRBitmap(svgText);
             ivPicture.setImageBitmap(bitmap);
             state = QR_PICTURE;
-            setButtonState();
+            setButtonsState();
         } catch (QRGenerationException e) {
             e.printStackTrace();
             showSnackBarError(getString(R.string.main_error_too_big_data));
@@ -251,21 +253,21 @@ public class MainActivity extends AppCompatActivity implements InputDialog.Input
     private void setNotLoadedState() {
         state = NOT_LOADED;
         ivPicture.setImageResource(R.mipmap.ic_launcher_round);
-        setButtonState();
+        setButtonsState();
     }
 
 
     public void setSvg(String s) {
         svgText = s;
         setSvgState();
-        setButtonState();
+        setButtonsState();
     }
 
     public void setSvgError(String url) {
         svgText = null;
         setNotLoadedState();
-        setButtonState();
-        showSnackBarError(getString(R.string.main_error_loading) + " " +url);
+        setButtonsState();
+        showSnackBarError(getString(R.string.main_error_loading) + " " + url);
     }
 
     private void showSnackBar(String message, boolean error) {
