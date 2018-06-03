@@ -13,7 +13,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class SvgHelper {
-    private static final int MAX_SIZE_QR = 3000;
 
     public static String getSvgText(InputStream inputStream) throws IOException, IndexOutOfBoundsException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -24,9 +23,6 @@ public class SvgHelper {
         }
         String result = builder.toString();
         int svgTextLength = result.length();
-//        if (svgTextLength > MAX_SIZE_QR) {
-//            throw new IndexOutOfBoundsException("SVG size = " + svgTextLength + ". MAX_SIZE_QR=" + MAX_SIZE_QR);
-//        }
 
         return result.substring(0, svgTextLength);
     }

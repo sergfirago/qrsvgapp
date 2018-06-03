@@ -19,8 +19,6 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
         return intent.getStringExtra(EXTRA_QR_CODE);
     }
 
-    private final String TAG = "ScanActivity";
-
     private ZXingScannerView mScannerView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

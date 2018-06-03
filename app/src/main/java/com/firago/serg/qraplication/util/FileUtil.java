@@ -35,7 +35,6 @@ public class FileUtil {
     }
 
     public static File getExternalStorageDir(){
-//        return Environment.getExternalStoragePublicDirectory(Environment.MEDIA_MOUNTED);
         return getPublicPicturesStorageDir();
     }
 
