@@ -14,6 +14,8 @@ import java.io.InputStreamReader;
 
 public class SvgHelper {
 
+    public static final int DEFAULT_SIZE = 200;
+
     public static String getSvgText(InputStream inputStream) throws IOException, IndexOutOfBoundsException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         String buf;
@@ -30,7 +32,11 @@ public class SvgHelper {
     @NonNull
     public static Bitmap getBitmapFromSvgText(String svgText) throws SVGParseException {
         SVG svg = SVG.getFromString(svgText);
-        Bitmap bitmap = Bitmap.createBitmap((int) svg.getDocumentWidth(), (int) svg.getDocumentHeight(), Bitmap.Config.ARGB_8888);
+        int documentWidth = (int) svg.getDocumentWidth();
+        int documentHeight = (int) svg.getDocumentHeight();
+        if (documentHeight<=0 ) documentHeight = DEFAULT_SIZE;
+        if (documentWidth<=0 ) documentWidth = DEFAULT_SIZE;
+        Bitmap bitmap = Bitmap.createBitmap( documentWidth, documentHeight, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         svg.renderToCanvas(canvas);
         return bitmap;
