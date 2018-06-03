@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -12,11 +13,10 @@ import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.caverock.androidsvg.SVGParseException;
-import com.firago.serg.qraplication.AsyncSvgLoadingTask;
 import com.firago.serg.qraplication.R;
+import com.firago.serg.qraplication.svgload.AsyncSvgLoadingTask;
 import com.firago.serg.qraplication.util.FileUtil;
 import com.firago.serg.qraplication.util.QRHelper;
 import com.firago.serg.qraplication.util.SvgHelper;
@@ -71,8 +71,12 @@ public class MainActivity extends AppCompatActivity implements InputDialog.Input
             svgText = savedInstanceState.getString(EXTRA_SVG_KEY);
             state = savedInstanceState.getInt(EXTRA_STATE_KEY);
         }
+        resetActivityState();
+        getPermissions();
+    }
+
+    private void resetActivityState() {
         Log.d(TAG, "onCreate: state=" + state);
-        setButtonState();
         switch (state) {
             case NOT_LOADED: {
                 setNotLoadedState();
@@ -87,7 +91,6 @@ public class MainActivity extends AppCompatActivity implements InputDialog.Input
                 break;
             }
         }
-        getPermissions();
     }
 
     private void getPermissions() {
@@ -116,16 +119,19 @@ public class MainActivity extends AppCompatActivity implements InputDialog.Input
             case NOT_LOADED: {
                 btExport.setText(R.string.main_export);
                 btExport.setEnabled(false);
+                btSave.setEnabled(false);
                 break;
             }
             case QR_PICTURE: {
                 btExport.setText(R.string.main_svg);
                 btExport.setEnabled(true);
+                btSave.setEnabled(true);
                 break;
             }
             case SVG_PICTURE: {
                 btExport.setText(R.string.main_export);
                 btExport.setEnabled(true);
+                btSave.setEnabled(true);
                 break;
             }
         }
@@ -163,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements InputDialog.Input
                 e.printStackTrace();
             }
         }
-        showSnackBarError(text);
+        showSnackBarInfo(text);
         new AsyncSvgLoadingTask(this).execute(text);
     }
 
@@ -199,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements InputDialog.Input
             file = FileUtil.createImageFile();
             Log.d(TAG, "onClickSave: " + file.getAbsolutePath());
             QRHelper.writeToFile(svgText, file);
-            Toast.makeText(this, getString(R.string.main_save_qr_to) + " " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+            showSnackBarInfo(getString(R.string.main_save_qr_to) + " " + file.getAbsolutePath());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (QRGenerationException e) {
@@ -251,16 +257,18 @@ public class MainActivity extends AppCompatActivity implements InputDialog.Input
 
     public void setSvg(String s) {
         svgText = s;
-        if (s == null) {
-            setNotLoadedState();
-            setButtonState();
-        } else {
-            setSvgState();
-            setButtonState();
-        }
+        setSvgState();
+        setButtonState();
     }
 
-    private void showSnackBarError(String message) {
+    public void setSvgError(String url) {
+        svgText = null;
+        setNotLoadedState();
+        setButtonState();
+        showSnackBarError(getString(R.string.main_error_loading) + " " +url);
+    }
+
+    private void showSnackBar(String message, boolean error) {
         Snackbar snackbar = Snackbar.make(btSave, message, Snackbar.LENGTH_LONG);
 
         Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
@@ -269,11 +277,23 @@ public class MainActivity extends AppCompatActivity implements InputDialog.Input
         textView.setVisibility(View.INVISIBLE);
 
         snackbarLayout.setPadding(0, 0, 0, 0);
-        View view = getLayoutInflater().inflate(R.layout.snackbar_item, snackbarLayout);
+
+        @LayoutRes int res = R.layout.snackbar_info_item;
+        if (error) res = R.layout.snackbar_error_item;
+        View view = getLayoutInflater().inflate(res, snackbarLayout);
 
         TextView tvErrorMessage = view.findViewById(R.id.tvErrorMessage);
         tvErrorMessage.setText(message);
         snackbar.show();
     }
+
+    private void showSnackBarError(String message) {
+        showSnackBar(message, true);
+    }
+
+    private void showSnackBarInfo(String message) {
+        showSnackBar(message, false);
+    }
+
 
 }

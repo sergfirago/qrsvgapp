@@ -12,4 +12,5 @@
     <string name="main_save_qr_to">"QR Сохранен в "</string>
     <string name="main_incorrect_data">Не коррестные данные</string>
     <string name="main_permissions_deny">Если вы отклоняете разрешение, вы не можете использовать эту услугу. Включите разрешения [Настройки] [Доступы]</string>
+    <string name="main_error_loading">Ошибка загрузки svg-файла</string>
 </resources>
