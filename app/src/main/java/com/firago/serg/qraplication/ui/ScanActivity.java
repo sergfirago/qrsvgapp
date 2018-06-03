@@ -1,11 +1,11 @@
-package com.firago.serg.qraplication;
+package com.firago.serg.qraplication.ui;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
 
+import com.firago.serg.qraplication.util.RequestPermissions;
 import com.google.zxing.Result;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -16,10 +16,11 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
     public static Intent newIntent(Context context){
         return new Intent(context, ScanActivity.class);
     }
-//    public static boolean hes
     public static String getQRCode(Intent intent){
         return intent.getStringExtra(EXTRA_QR_CODE);
     }
+
+    private final String TAG = "ScanActivity";
 
     private ZXingScannerView mScannerView;
     @Override
@@ -27,6 +28,9 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
         super.onCreate(savedInstanceState);
         mScannerView = new ZXingScannerView(this);   // Programmatically initialize the scanner view
         setContentView(mScannerView);
+//        requestPermission();
+        RequestPermissions.cameraPermission(this);
+
     }
     @Override
     public void onResume() {
@@ -46,7 +50,6 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
 
         // If you would like to resume scanning, call this method below:
         mScannerView.resumeCameraPreview(this);
-        Toast.makeText(this, result.getText(), Toast.LENGTH_LONG).show();
         Intent intent = new Intent();
         intent.putExtra(EXTRA_QR_CODE, result.getText());
         setResult(RESULT_OK, intent);

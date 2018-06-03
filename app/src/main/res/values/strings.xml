@@ -1,7 +1,13 @@
 <resources>
-    <string name="app_name">QRAplication</string>
+    <string name="app_name">QRSvg</string>
     <string name="main_bt_import">Import</string>
-    <string name="main_bt_export">Export</string>
     <string name="main_bt_save">Save</string>
     <string name="main_bt_read">Read</string>
+    <string name="main_export">Export</string>
+    <string name="main_svg">Show SVG</string>
+    <string name="main_error_too_big_data">Data too big</string>
+    <string name="dialog_load">Load</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="main_save_qr_to">Save QR to</string>
+    <string name="main_incorrect_data">incorrect data</string>
 </resources>
