@@ -10,6 +10,14 @@ QR &lt;-> SVG
 ```java
 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 ```
+Так же, есть возможность импортировать кнопкой "поделиться" из программ просмотра image-файлов
+```xml
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="image/*"/>
+            </intent-filter>
+```
 После импорта рисунок показывается на экране:
 
 ![Imgur](https://i.imgur.com/3iUuHssl.png)
