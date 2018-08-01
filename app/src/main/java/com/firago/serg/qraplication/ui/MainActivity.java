@@ -34,6 +34,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.firago.serg.qraplication.util.IntentLoader.loadFromIntent;
+
 public class MainActivity extends AppCompatActivity implements InputDialog.InputDialogListener {
 
     private static final String TAG = "MainActivity";
@@ -57,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements InputDialog.Input
     ImageView ivPicture;
 
     private String svgText;
-    private int state;
+    private int state = NOT_LOADED;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,11 +68,17 @@ public class MainActivity extends AppCompatActivity implements InputDialog.Input
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
-        state = NOT_LOADED;
+
         if (savedInstanceState != null) {
+            // load from savedState
             svgText = savedInstanceState.getString(EXTRA_SVG_KEY);
             state = savedInstanceState.getInt(EXTRA_STATE_KEY);
+        }else{
+            //load from intent
+            svgText = loadFromIntent(this, getIntent());
+            if (!svgText.isEmpty()) state = SVG_PICTURE;
         }
+
         resetActivityState();
         getPermissions();
     }
