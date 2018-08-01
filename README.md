@@ -2,7 +2,9 @@
 QR &lt;-> SVG
 
 Приложение позволяет конвертировать небольшие файлы [масштабируемой векторной графики](https://ru.wikipedia.org/wiki/SVG) в [QR](https://ru.wikipedia.org/wiki/QR-%D0%BA%D0%BE%D0%B4) код и обратно.
+
 ![Imgur](https://i.imgur.com/KpPTgOil.png)
+
 Кнопки и действия:
 - Import - Позволяет загрузить svg-файл по ссылке из интернета или по имени файла из директории Picture
 ```java
@@ -20,8 +22,15 @@ Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 - Save - Сохраняет QR код в директории Picture в альбоме "qr"
 - Read - Читает QR код и конвертирует его в векторную графику.
 
+## Структура пакетов:
+- ui - Activity и DialogFragment
+1. MainActivity - главный экран
+2. ScanActivity - работа с камерой, чтение QR кода
+3. InputDialog - диалог для четние ссылки или имени файла
+- svgload - AsyncTask для загрузки svg файла (интернет или из устройства)
+- util 
 
-Используемые библиотеки:
+## Используемые библиотеки:
  - 'com.caverock:androidsvg:1.2.1' - работа с векторной графикой
  - 'me.dm7.barcodescanner:zxing:1.9.8' - работа с сканером QR кодов
  - 'com.github.kenglxn.QRGen:android:2.4.0' - генерация QR кода
